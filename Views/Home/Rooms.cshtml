@@ -1,0 +1,85 @@
+﻿@{
+    ViewData["Title"] = "Rooms";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Ensure this matches your layout file path
+}
+
+<div class="default">
+    <div class="container my-5">
+        <h1 class="text-center">Logo</h1>
+        <div class="row">
+            <h4 class="text-center">Romania</h4>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Standard</h5>
+                        <p class="card-text fw-bold">Price</p>
+
+                        <div id="carouselR1" class="carousel slide">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active"></div>
+                                <div class="carousel-item"></div>
+                                <div class="carousel-item"></div>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselR1" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselR1" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            </button>
+                        </div>
+
+                        <a class="btn btn-warning btn-outline-danger" asp-page="/Booking">Book Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Standard Deluxe</h5>
+                        <p class="card-text fw-bold">Price</p>
+
+                        <div id="carouselR2" class="carousel slide">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active"></div>
+                                <div class="carousel-item"></div>
+                                <div class="carousel-item"></div>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselR2" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselR2" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            </button>
+                        </div>
+
+                        <a class="btn btn-warning btn-outline-danger" asp-page="/Booking">Book Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">King Size</h5>
+                        <p class="card-text fw-bold">Price</p>
+
+                        <div id="carouselR3" class="carousel slide">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active"></div>
+                                <div class="carousel-item"></div>
+                                <div class="carousel-item"></div>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselR3" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselR3" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            </button>
+                        </div>
+
+                        <a class="btn btn-warning btn-outline-danger" asp-page="/Booking">Book Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

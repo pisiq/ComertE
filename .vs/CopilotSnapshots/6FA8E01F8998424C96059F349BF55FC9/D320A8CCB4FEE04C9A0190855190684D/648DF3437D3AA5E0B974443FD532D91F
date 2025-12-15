@@ -1,0 +1,70 @@
+﻿<!-- Views/About/Edit.cshtml -->
+@model Hotel.Models.About
+@{
+    ViewData["Title"] = "Edit About Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="hero">
+    <div class="container my-5 pt-4">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>Edit About Page</h1>
+                    <a asp-controller="Users" asp-action="Admin" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                </div>
+
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show">
+                        @TempData["SuccessMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show">
+                        @TempData["ErrorMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                <div class="card shadow">
+                    <div class="card-body">
+                        <form asp-action="Edit" method="post">
+                            <input type="hidden" asp-for="Id" />
+
+                            <div class="mb-3">
+                                <label asp-for="Description" class="form-label">About Page Content (HTML supported)</label>
+                                <textarea asp-for="Description" class="form-control" rows="15"
+                                          id="aboutEditor"></textarea>
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-warning btn-outline-danger">
+                                    <i class="bi bi-save me-2"></i>Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <!-- Add rich text editor - you can replace this with your preferred editor -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/37.0.1/classic/ckeditor.js"></script>
+    <script>
+        ClassicEditor
+            .create(document.querySelector('#aboutEditor'))
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
+}

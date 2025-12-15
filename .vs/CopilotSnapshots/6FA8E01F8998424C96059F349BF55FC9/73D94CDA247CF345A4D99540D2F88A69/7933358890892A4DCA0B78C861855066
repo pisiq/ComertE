@@ -1,0 +1,164 @@
+﻿model Hotel.ViewsModels.AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="hero">
+    <div class="container my-5 pt-5">
+        <div class="row mb-4">
+            <div class="col-12">
+                <h2 class="text-center">Admin Dashboard</h2>
+            </div>
+        </div>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show">
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <!-- Dashboard Cards -->
+        <div class="row mb-4">
+            <!-- Users Card -->
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-primary shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="bi bi-people-fill me-2"></i>Users</h5>
+                    </div>
+                    <div class="card-body text-center d-flex flex-column align-items-center justify-content-center">
+                        <div class="display-1 fw-bold text-primary mb-3">@Model.TotalUsers</div>
+                        <p class="card-text">Total registered users in the system</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rooms Card -->
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-success shadow">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="bi bi-house-door-fill me-2"></i>Rooms</h5>
+                    </div>
+                    <div class="card-body text-center d-flex flex-column align-items-center justify-content-center">
+                        <div class="display-1 fw-bold text-success mb-3">@Model.TotalRooms</div>
+                        <p class="card-text">Total rooms available for booking</p>
+                        <a asp-controller="Room" asp-action="Index" class="btn btn-outline-success mt-3">
+                            <i class="bi bi-gear-fill me-2"></i>Manage Rooms
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Locations Card -->
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-warning shadow">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0"><i class="bi bi-geo-alt-fill me-2"></i>Locations</h5>
+                    </div>
+                    <div class="card-body text-center d-flex flex-column align-items-center justify-content-center">
+                        <div class="display-1 fw-bold text-warning mb-3">@Model.TotalLocations</div>
+                        <p class="card-text">Total property locations</p>
+                        <a asp-controller="Location" asp-action="Index" class="btn btn-outline-warning mt-3">
+                            <i class="bi bi-gear-fill me-2"></i>Manage Locations
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Bookings Card -->
+            <div class="col-md-3 mb-4">
+                <div class="card h-100 border-info shadow">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="bi bi-calendar-check-fill me-2"></i>Bookings</h5>
+                    </div>
+                    <div class="card-body text-center d-flex flex-column align-items-center justify-content-center">
+                        <div class="display-1 fw-bold text-info mb-3">@Model.TotalBookings</div>
+                        <p class="card-text">Total room bookings in the system</p>
+                        <a asp-controller="Booking" asp-action="AllBookings" class="btn btn-outline-info mt-3">
+                            <i class="bi bi-list-check me-2"></i>Manage Bookings
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Restaurant Card -->
+            <div class="col-md-3 mb-4">
+                <div class="card h-100 border-purple shadow">
+                    <div class="card-header bg-purple text-white" style="background-color: #6f42c1;">
+                        <h5 class="mb-0"><i class="bi bi-shop me-2"></i>Restaurant</h5>
+                    </div>
+                    <div class="card-body text-center d-flex flex-column align-items-center justify-content-center">
+                        <div class="display-1 fw-bold mb-3" style="color: #6f42c1;">@Model.TotalRestaurants</div>
+                        <p class="card-text">Total restaurant menu items</p>
+                        <a asp-controller="Restaurant" asp-action="Index" class="btn btn-outline-primary mt-3">
+                            <i class="bi bi-gear-fill me-2"></i>Manage Menu
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dishes Card -->
+            <div class="col-md-3 mb-4">
+                <div class="card h-100 border-danger shadow">
+                    <div class="card-header bg-danger text-white">
+                        <h5 class="mb-0"><i class="bi bi-cup-hot-fill me-2"></i>Dishes</h5>
+                    </div>
+                    <div class="card-body text-center d-flex flex-column align-items-center justify-content-center">
+                        <div class="display-1 fw-bold text-danger mb-3">@Model.TotalDishes</div>
+                        <p class="card-text">Total dishes available in the menu</p>
+                        <a asp-controller="Dish" asp-action="Index" class="btn btn-outline-danger mt-3">
+                            <i class="bi bi-gear-fill me-2"></i>Manage Dishes
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Contact Settings Card -->
+            <div class="col-md-3 mb-4">
+                <div class="card h-100 border-secondary shadow">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0"><i class="bi bi-telephone-fill me-2"></i>Contact Info</h5>
+                    </div>
+                    <div class="card-body text-center d-flex flex-column align-items-center justify-content-center">
+                        <div class="display-4 fw-bold text-secondary mb-3"><i class="bi bi-info-circle"></i></div>
+                        <p class="card-text">Manage contact information displayed to users</p>
+                        <a asp-controller="ContactSettings" asp-action="Edit" class="btn btn-outline-secondary mt-3">
+                            <i class="bi bi-pencil-fill me-2"></i>Edit Contact Info
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- About Page Card -->
+            <div class="col-md-3 mb-4">
+                <div class="card h-100 border-info shadow">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="bi bi-info-circle-fill me-2"></i>About Page</h5>
+                    </div>
+                    <div class="card-body text-center d-flex flex-column align-items-center justify-content-center">
+                        <div class="display-4 fw-bold text-info mb-3"><i class="bi bi-file-earmark-text"></i></div>
+                        <p class="card-text">Manage the content on your About page</p>
+                        <a asp-controller="About" asp-action="Edit" class="btn btn-outline-info mt-3">
+                            <i class="bi bi-pencil-fill me-2"></i>Edit About Content
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Enable Bootstrap tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+}

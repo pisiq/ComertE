@@ -1,0 +1,54 @@
+﻿@model Hotel.ViewsModels.DishViewModel
+
+@{
+    ViewData["Title"] = "Create Dish";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5 pt-4">
+    <h1>Create Dish</h1>
+
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Price" class="form-label"></label>
+                    <input asp-for="Price" class="form-control" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Type" class="form-label"></label>
+                    <select asp-for="Type" class="form-select">
+                        <option value="">-- Select Type --</option>
+                        <option value="Soup">Soup</option>
+                        <option value="Beef">Beef</option>
+                        <option value="Chicken">Chicken</option>
+                        <option value="Beverage">Beverage</option>
+                        <option value="Side Dish">Side Dish</option>
+                    </select>
+                    <span asp-validation-for="Type" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">Create</button>
+                    <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

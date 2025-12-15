@@ -1,0 +1,169 @@
+﻿@model Hotel.Models.Booking
+
+@{
+    ViewData["Title"] = "Booking Details";
+}
+
+<div class="hero">
+    <div class="container mt-5 pt-4">
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h1><i class="bi bi-calendar-check me-2"></i>Booking Details</h1>
+            </div>
+            <div class="col-md-4 text-end">
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-action="AllBookings" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Back to All Bookings
+                    </a>
+                }
+                else
+                {
+                    <a asp-action="MyBookings" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Back to My Bookings
+                    </a>
+                }
+            </div>
+        </div>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show">
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card shadow mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Booking Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <dl class="row">
+                            <dt class="col-sm-4">Booking ID:</dt>
+                            <dd class="col-sm-8">#@Model.Id</dd>
+
+                            @if (Model.User != null)
+                            {
+                                <dt class="col-sm-4">Customer:</dt>
+                                <dd class="col-sm-8">@Model.User.Name</dd>
+                            }
+
+                            <dt class="col-sm-4">Booking Date:</dt>
+                            <dd class="col-sm-8">@Model.BookingDate.ToString("MMM dd, yyyy HH:mm")</dd>
+
+                            <dt class="col-sm-4">Check-in Date:</dt>
+                            <dd class="col-sm-8">@Model.CheckInDate.ToString("MMM dd, yyyy")</dd>
+
+                            <dt class="col-sm-4">Check-out Date:</dt>
+                            <dd class="col-sm-8">@Model.CheckOutDate.ToString("MMM dd, yyyy")</dd>
+
+                            <dt class="col-sm-4">Number of Nights:</dt>
+                            <dd class="col-sm-8">@Model.NumberOfNights</dd>
+
+                            <dt class="col-sm-4">Status:</dt>
+                            <dd class="col-sm-8">
+                                @switch (Model.Status)
+                                {
+                                    case Hotel.Models.BookingStatus.Pending:
+                                        <span class="badge bg-warning">Pending</span>
+                                        break;
+                                    case Hotel.Models.BookingStatus.Confirmed:
+                                        <span class="badge bg-success">Confirmed</span>
+                                        break;
+                                    case Hotel.Models.BookingStatus.Cancelled:
+                                        <span class="badge bg-danger">Cancelled</span>
+                                        break;
+                                    case Hotel.Models.BookingStatus.Completed:
+                                        <span class="badge bg-info">Completed</span>
+                                        break;
+                                }
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+
+                <div class="card shadow mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">Booked Items</h5>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.BookingItems != null && Model.BookingItems.Any())
+                        {
+                            @foreach (var item in Model.BookingItems)
+                            {
+                                <div class="row mb-3 pb-3 border-bottom">
+                                    <div class="col-md-2">
+                                        @if (item.Room != null && !string.IsNullOrEmpty(item.Room.MainPhotoPath))
+                                        {
+                                            <img src="@item.Room.MainPhotoPath" alt="@item.Room.Type" class="img-fluid rounded" />
+                                        }
+                                        else
+                                        {
+                                            <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded" style="height: 80px;">
+                                                <i class="bi bi-image"></i>
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5>@(item.Room?.Type ?? "Unknown")</h5>
+                                        <p class="text-muted mb-0">@(item.Room?.Location?.Name ?? "N/A")</p>
+                                        <p class="mb-0"><small>Quantity: @item.Quantity</small></p>
+                                    </div>
+                                    <div class="col-md-4 text-end">
+                                        <p class="mb-0"><strong>$@item.PricePerNight.ToString("F2")</strong> / night</p>
+                                        <p class="text-muted mb-0">@item.Quantity × @Model.NumberOfNights night(s)</p>
+                                        <p class="fw-bold text-primary">$@item.TotalPrice.ToString("F2")</p>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-muted">No items found for this booking.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow sticky-top" style="top: 20px;">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Total:</span>
+                            <strong class="text-success fs-4">$@Model.TotalPrice.ToString("F2")</strong>
+                        </div>
+
+                        @if (Model.Status != Hotel.Models.BookingStatus.Cancelled &&
+                                                Model.Status != Hotel.Models.BookingStatus.Completed)
+                        {
+                            <hr />
+                            <form asp-action="Cancel" asp-route-id="@Model.Id" method="post">
+                                @Html.AntiForgeryToken()
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-danger"
+                                            onclick="return confirm('Are you sure you want to cancel this booking?')">
+                                        <i class="bi bi-x-circle me-2"></i>Cancel Booking
+                                    </button>
+                                </div>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

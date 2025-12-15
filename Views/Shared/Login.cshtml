@@ -1,0 +1,38 @@
+﻿@model Hotel.ViewsModels.LoginModel
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="hero">
+    <div class="container my-5">
+        <div class="row m-md-4">
+            <h2 class="text-center">Login</h2>
+        </div>
+        <div class="card p-4 shadow-lg default">
+            <form method="post" asp-controller="Users" asp-action="Login">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label class="form-label" asp-for="Email">Email</label>
+                    <input class="form-control" asp-for="Email" placeholder="ex:Email@gmail.com" required type="email">
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" asp-for="Password">Password</label>
+                    <input class="form-control" asp-for="Password" placeholder="Password" required type="password">
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <h6>Don't have an account?</h6>
+                    <a class="nav-link" asp-controller="Users" asp-action="Sign">Sign up</a>
+                </div>
+
+                <button class="btn btn-warning btn-outline-danger w-100" type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+</div>

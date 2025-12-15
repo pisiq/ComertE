@@ -1,0 +1,258 @@
+/* site.css - Updated with Beige and Dark Red theme */
+
+:root {
+    --primary-bg: #f5f5dc; /* Beige background */
+    --primary-text: #8b0000; /* Dark red text */
+    --nav-bg: #8b0000; /* Dark red nav background */
+    --accent-blue: #0275d8;
+    --accent-green: #28a745;
+    --accent-yellow: #ffc107;
+    --accent-teal: #20c997;
+    --accent-purple: #6f42c1;
+    --accent-red: #dc3545;
+    --accent-gray: #6c757d;
+    --card-border: rgba(139, 0, 0, 0.2);
+    --card-shadow: rgba(0, 0, 0, 0.1);
+}
+
+html {
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+body {
+    margin-bottom: 60px;
+    background-color: var(--primary-bg);
+    color: var(--primary-text);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Navbar styling */
+.navbar-dark.bg-danger {
+    background-color: var(--nav-bg) !important;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+    .navbar-dark .navbar-nav .nav-link:hover {
+        color: #ffffff;
+    }
+
+/* Hero section */
+.hero {
+    background: var(--primary-bg) no-repeat center center/cover;
+    min-height: 100vh;
+    width: 100%;
+    color: var(--primary-text);
+    padding-top: 80px; /* Account for fixed navbar */
+}
+
+/* Card styling */
+.card {
+    border: 1px solid var(--card-border);
+    box-shadow: 0 4px 6px var(--card-shadow);
+    overflow: hidden;
+}
+
+.card-header {
+    padding: 0.75rem 1.25rem;
+    font-weight: 600;
+}
+
+/* Custom card header colors */
+.card .card-header.bg-primary {
+    background-color: var(--accent-blue) !important;
+}
+
+.card .card-header.bg-success {
+    background-color: var(--accent-green) !important;
+}
+
+.card .card-header.bg-warning {
+    background-color: var(--accent-yellow) !important;
+}
+
+.card .card-header.bg-info {
+    background-color: var(--accent-teal) !important;
+}
+
+.card .card-header.bg-purple {
+    background-color: var(--accent-purple) !important;
+}
+
+.card .card-header.bg-danger {
+    background-color: var(--accent-red) !important;
+}
+
+.card .card-header.bg-secondary {
+    background-color: var(--accent-gray) !important;
+}
+
+/* Button styling */
+.btn-primary {
+    background-color: var(--accent-blue);
+    border-color: var(--accent-blue);
+}
+
+.btn-success {
+    background-color: var(--accent-green);
+    border-color: var(--accent-green);
+}
+
+.btn-warning {
+    background-color: var(--accent-yellow);
+    border-color: var(--accent-yellow);
+}
+
+.btn-info {
+    background-color: var(--accent-teal);
+    border-color: var(--accent-teal);
+}
+
+.btn-danger {
+    background-color: var(--accent-red);
+    border-color: var(--accent-red);
+}
+
+.btn-secondary {
+    background-color: var(--accent-gray);
+    border-color: var(--accent-gray);
+}
+
+/* Outline button variants */
+.btn-outline-primary {
+    color: var(--accent-blue);
+    border-color: var(--accent-blue);
+}
+
+.btn-outline-success {
+    color: var(--accent-green);
+    border-color: var(--accent-green);
+}
+
+.btn-outline-warning {
+    color: var(--accent-yellow);
+    border-color: var(--accent-yellow);
+}
+
+.btn-outline-info {
+    color: var(--accent-teal);
+    border-color: var(--accent-teal);
+}
+
+.btn-outline-danger {
+    color: var(--accent-red);
+    border-color: var(--accent-red);
+}
+
+.btn-outline-secondary {
+    color: var(--accent-gray);
+    border-color: var(--accent-gray);
+}
+
+/* Hover states for buttons */
+.btn-primary:hover, .btn-primary:focus {
+    background-color: darken(var(--accent-blue), 10%);
+    border-color: darken(var(--accent-blue), 12%);
+}
+
+/* Footer styling */
+.footer {
+    background-color: var(--primary-bg);
+    border-top: 1px solid var(--primary-text);
+    color: var(--primary-text);
+    padding: 1rem 0;
+}
+
+    .footer a {
+        color: var(--primary-text);
+        text-decoration: underline;
+    }
+
+/* Admin dashboard cards */
+.admin-dashboard .card {
+    transition: transform 0.3s ease;
+    margin-bottom: 1.5rem;
+}
+
+    .admin-dashboard .card:hover {
+        transform: translateY(-5px);
+    }
+
+.profile-pic-small {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 8px;
+}
+
+.profile-menu-item {
+    display: flex;
+    align-items: center;
+}
+
+/* Form styling */
+.form-control:focus {
+    border-color: var(--primary-text);
+    box-shadow: 0 0 0 0.25rem rgba(139, 0, 0, 0.25);
+}
+
+/* Table styling */
+.table {
+    color: var(--primary-text);
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(139, 0, 0, 0.05);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(139, 0, 0, 0.1);
+}
+
+/* Text colors */
+.text-primary {
+    color: var(--accent-blue) !important;
+}
+
+.text-success {
+    color: var(--accent-green) !important;
+}
+
+.text-warning {
+    color: var(--accent-yellow) !important;
+}
+
+.text-info {
+    color: var(--accent-teal) !important;
+}
+
+.text-danger {
+    color: var(--primary-text) !important;
+}
+
+/* Badge styling */
+.badge {
+    padding: 0.35em 0.65em;
+}
+
+/* Alert styling */
+.alert {
+    border-radius: 0.25rem;
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.alert-dismissible .btn-close {
+    padding: 0.75rem 1.25rem;
+}

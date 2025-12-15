@@ -1,0 +1,91 @@
+﻿@model RoomViewModel
+
+@{
+    ViewData["Title"] = "Create Room";
+}
+<div class="hero">
+    <div class="container mt-4">
+        <h1>Create Room</h1>
+
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="Type" class="form-label"></label>
+                        <input asp-for="Type" class="form-control" />
+                        <span asp-validation-for="Type" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Price" class="form-label"></label>
+                        <input asp-for="Price" class="form-control" />
+                        <span asp-validation-for="Price" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="RoomCount" class="form-label">Available Rooms</label>
+                        <input asp-for="RoomCount" class="form-control" />
+                        <span asp-validation-for="RoomCount" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="LocationId" class="form-label">Location</label>
+                        @if (ViewBag.LocationsError != null)
+                        {
+                            <div class="alert alert-warning">@ViewBag.LocationsError</div>
+                            <a asp-controller="Locations" asp-action="Create" class="btn btn-sm btn-warning">Create Location</a>
+                        }
+                        else
+                        {
+                            <select asp-for="LocationId" class="form-select" asp-items="ViewBag.Locations">
+                                <option value="">-- Select Location --</option>
+                            </select>
+                            <span asp-validation-for="LocationId" class="text-danger"></span>
+                        }
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label"></label>
+                        <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="MainPhoto" class="form-label">Main Photo</label>
+                        <input asp-for="MainPhoto" class="form-control" accept="image/*" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="AdditionalPhotos" class="form-label">Additional Photos (up to 3)</label>
+                        <input asp-for="AdditionalPhotos" class="form-control"
+                               accept="image/*" multiple onchange="validateFileCount(this, 3)" />
+                        <small class="form-text text-muted">Select up to 3 additional photos</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">Create</button>
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+
+        <script>
+            function validateFileCount(input, maxCount) {
+                if (input.files.length > maxCount) {
+                    alert(`You can only select up to ${maxCount} files.`);
+                    input.value = '';
+                }
+            }
+        </script>
+    }

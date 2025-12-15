@@ -1,0 +1,201 @@
+﻿@model Hotel.Models.Room
+
+@{
+    ViewData["Title"] = $"Product Details - {Model.Type}";
+}
+<div class="hero">
+    <div class="container mt-5 pt-4">
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h1>@Model.Type</h1>
+            </div>
+            <div class="col-md-4 text-end">
+                <a asp-action="AllRooms" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Back to List
+                </a>
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-outline-danger ms-2">
+                        <i class="bi bi-pencil-fill me-2"></i>Edit
+                    </a>
+                }
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <!-- Main photo display -->
+                <div class="card shadow mb-4">
+                    <div class="card-body p-0">
+                        @if (!string.IsNullOrEmpty(Model.MainPhotoPath))
+                        {
+                            <img src="@Model.MainPhotoPath" class="img-fluid w-100 rounded" alt="@Model.Type" style="max-height: 400px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <div class="bg-light text-center p-5">
+                                <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                                <p class="mt-2 text-muted">No main photo available</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Additional photos in a row -->
+                <div class="row mb-4">
+                    @{
+                        var photos = Model.Photos.OrderBy(p => p.DisplayOrder).Take(3).ToList();
+                        if (photos.Any())
+                        {
+                            foreach (var photo in photos)
+                            {
+                                <div class="col-md-4 mb-3">
+                                    <div class="card shadow h-100">
+                                        <div class="card-body p-0">
+                                            <img src="@photo.FilePath" class="img-fluid w-100 rounded" alt="@photo.Caption"
+                                                 style="height: 150px; object-fit: cover;">
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            for (int i = photos.Count; i < 3; i++)
+                            {
+                                <div class="col-md-4 mb-3">
+                                    <div class="card shadow h-100 bg-light">
+                                        <div class="card-body d-flex justify-content-center align-items-center"
+                                             style="height: 150px;">
+                                            <div class="text-center text-muted">
+                                                <i class="bi bi-image" style="font-size: 2rem;"></i>
+                                                <p class="mb-0 small">No photo</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="col-12 text-center text-muted my-3">
+                                <p>No additional photos available</p>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <!-- Product details card -->
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <h4 class="mb-0">Product Details</h4>
+                    </div>
+                    <div class="card-body">
+                        <dl class="row mb-0">
+                            <dt class="col-sm-4">Name</dt>
+                            <dd class="col-sm-8">@Model.Type</dd>
+
+                            <dt class="col-sm-4">Category</dt>
+                            <dd class="col-sm-8">@(Model.Location?.Name ?? "N/A")</dd>
+
+                            <dt class="col-sm-4">Price</dt>
+                            <dd class="col-sm-8">
+                                <span class="fw-bold fs-4">@Model.Price.ToString("C")</span>
+                            </dd>
+
+                            <dt class="col-sm-4">Stock</dt>
+                            <dd class="col-sm-8">
+                                @if (Model.RoomCount > 0)
+                                {
+                                    <span class="badge bg-success">@Model.RoomCount in stock</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Out of stock</span>
+                                }
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-grid gap-2">
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                @if (Model.RoomCount > 0)
+                                {
+                                    <form id="addToCartForm" asp-controller="Cart" asp-action="AddToCart" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="productId" value="@Model.Id" />
+                                        <div class="input-group mb-2">
+                                            <span class="input-group-text">Quantity</span>
+                                            <input type="number" name="quantity" class="form-control" value="1" min="1" max="@Model.RoomCount" />
+                                        </div>
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            <i class="bi bi-cart-plus me-2"></i>Add to Cart
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-secondary" disabled>
+                                        <i class="bi bi-x-circle me-2"></i>Out of Stock
+                                    </button>
+                                }
+                            }
+                            else
+                            {
+                                <a asp-controller="Home" asp-action="Login" class="btn btn-primary w-100">
+                                    <i class="bi bi-box-arrow-in-right me-2"></i>Login to Purchase
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Description card -->
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <h4 class="mb-0">Description</h4>
+                    </div>
+                    <div class="card-body">
+                        @if (!string.IsNullOrEmpty(Model.Description))
+                        {
+                            <p class="mb-0">@Model.Description</p>
+                        }
+                        else
+                        {
+                            <p class="text-muted mb-0">No description available</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $('#addToCartForm').submit(function (e) {
+            e.preventDefault();
+            
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        alert('Product added to cart!');
+                        // Update cart count in navigation
+                        if (response.itemCount) {
+                            $('.cart-badge .badge').text(response.itemCount);
+                        }
+                    } else {
+                        alert(response.message || 'Failed to add product to cart');
+                    }
+                },
+                error: function () {
+                    alert('An error occurred');
+                }
+            });
+        });
+    </script>
+}

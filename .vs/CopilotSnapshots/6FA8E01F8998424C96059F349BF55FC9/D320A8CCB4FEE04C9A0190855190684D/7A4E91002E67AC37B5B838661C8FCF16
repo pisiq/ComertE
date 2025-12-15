@@ -1,0 +1,151 @@
+﻿@using Hotel.Services
+@using System.Security.Claims
+
+@inject IUserService UserService
+@inject ICartService CartService
+
+@{
+    string profilePicturePath = null;
+    int cartItemCount = 0;
+
+    if (User.Identity.IsAuthenticated)
+    {
+        var user = await UserService.GetUserByEmailAsync(User.Identity.Name);
+        if (user != null)
+        {
+            profilePicturePath = user.ProfilePicturePath;
+        }
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!string.IsNullOrEmpty(userId))
+        {
+            cartItemCount = await CartService.GetCartItemCountAsync(userId);
+        }
+    }
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Online Shop</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Hotel.styles.css" asp-append-version="true" />
+    <style>
+        .profile-pic-small {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 8px;
+        }
+
+        .profile-menu-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .cart-badge {
+            position: relative;
+        }
+
+        .cart-badge .badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+            <div class="container my-auto">
+                <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-shop me-2"></i>Online Shop
+                </a>
+
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li class="nav-item">
+                            <a class="nav-link profile-menu-item" asp-controller="Users" asp-action="Profile">
+                                @if (!string.IsNullOrEmpty(profilePicturePath))
+                                {
+                                    <img src="@Url.Content(profilePicturePath)" alt="Profile" class="profile-pic-small" />
+                                }
+                                else
+                                {
+                                    <img src="~/images/default-avatar.png" alt="Default Profile" class="profile-pic-small" />
+                                }
+                                Profile
+                            </a>
+                        </li>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Users" asp-action="Admin">Admin Dashboard</a>
+                            </li>
+                        }
+                        <li class="nav-item"><a class="nav-link" asp-controller="Users" asp-action="Logout">Logout</a></li>
+                    </ul>
+                }
+                else
+                {
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Login">Login</a></li>
+                    </ul>
+                }
+
+                <button class="navbar-toggler" data-bs-target="#navbarNav" data-bs-toggle="collapse" type="button">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto fw-bold">
+                        <li class="nav-item"><a class="nav-link" asp-controller="Room" asp-action="AllRooms"><i class="bi bi-box-seam me-1"></i>Products</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Location" asp-action="AllLocations"><i class="bi bi-tags me-1"></i>Categories</a></li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link cart-badge" asp-controller="Cart" asp-action="Index">
+                                    <i class="bi bi-cart-fill fs-5"></i>
+                                    @if (cartItemCount > 0)
+                                    {
+                                        <span class="badge bg-danger rounded-pill">@cartItemCount</span>
+                                    }
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="bg-dark text-white py-4 mt-3 footer">
+        <div class="container text-center text-md-start">
+            <div class="row align-items-center">
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <h5><i class="bi bi-shop me-2"></i>Online Shop</h5>
+                    <p class="mb-0">&copy; 2025 - All rights reserved</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

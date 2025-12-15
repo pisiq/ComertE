@@ -1,0 +1,234 @@
+﻿@model Hotel.Models.Booking
+
+@{
+    ViewData["Title"] = "Payment - Booking #" + Model.Id;
+}
+
+<div class="hero">
+    <div class="container mt-5 pt-4">
+        <h1><i class="bi bi-credit-card me-2"></i>Payment</h1>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show">
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card shadow mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Booking Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <dl class="row">
+                            <dt class="col-sm-4">Booking ID:</dt>
+                            <dd class="col-sm-8">#@Model.Id</dd>
+
+                            <dt class="col-sm-4">Booking Date:</dt>
+                            <dd class="col-sm-8">@Model.BookingDate.ToString("MMM dd, yyyy")</dd>
+
+                            <dt class="col-sm-4">Check-in:</dt>
+                            <dd class="col-sm-8">@Model.CheckInDate.ToString("MMM dd, yyyy")</dd>
+
+                            <dt class="col-sm-4">Check-out:</dt>
+                            <dd class="col-sm-8">@Model.CheckOutDate.ToString("MMM dd, yyyy")</dd>
+
+                            <dt class="col-sm-4">Number of Nights:</dt>
+                            <dd class="col-sm-8">@Model.NumberOfNights</dd>
+
+                            <dt class="col-sm-4">Status:</dt>
+                            <dd class="col-sm-8">
+                                <span class="badge bg-warning">@Model.Status</span>
+                            </dd>
+                        </dl>
+
+                        <hr />
+
+                        <h5>Booked Items:</h5>
+                        @foreach (var item in Model.BookingItems)
+                        {
+                            <div class="row mb-3 pb-3 border-bottom">
+                                <div class="col-md-2">
+                                    @if (!string.IsNullOrEmpty(item.Room.MainPhotoPath))
+                                    {
+                                        <img src="@item.Room.MainPhotoPath" alt="@item.Room.Type" class="img-fluid rounded" />
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded" style="height: 60px;">
+                                            <i class="bi bi-image"></i>
+                                        </div>
+                                    }
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>@item.Room.Type</h6>
+                                    <p class="text-muted mb-0">@item.Room.Location?.Name</p>
+                                    <small class="text-muted">Quantity: @item.Quantity</small>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <p class="mb-0"><strong>$@item.PricePerNight.ToString("F2")</strong> / night</p>
+                                    <p class="text-muted mb-0">@item.Quantity × @Model.NumberOfNights night(s)</p>
+                                    <p class="fw-bold">$@item.TotalPrice.ToString("F2")</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="card shadow mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="bi bi-paypal me-2"></i>Pay with PayPal</h5>
+                    </div>
+                    <div class="card-body">
+                        @Html.AntiForgeryToken()
+
+                        <div class="alert alert-info mb-4">
+                            <i class="bi bi-info-circle me-2"></i>
+                            You will be redirected to PayPal to complete your payment securely.
+                        </div>
+
+                        <!-- PayPal Button Container -->
+                        <div id="paypal-button-container"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow sticky-top" style="top: 20px;">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">Order Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal:</span>
+                            <span>$@Model.TotalPrice.ToString("F2")</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Tax (included):</span>
+                            <span>$@((Model.TotalPrice * 0.1m / 1.1m).ToString("F2"))</span>
+                        </div>
+                        <hr />
+                        <div class="d-flex justify-content-between mb-3">
+                            <strong>Total:</strong>
+                            <strong class="text-success fs-4">$@Model.TotalPrice.ToString("F2")</strong>
+                        </div>
+
+                        <div class="alert alert-warning">
+                            <small><i class="bi bi-shield-check me-2"></i>Secure Payment</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- PayPal SDK -->
+    <script src="https://www.paypal.com/sdk/js?client-id=AW-iUKBfUJCSWppZ11CFaF8Po9p4PEc_-jGzCGaKqsN4l_5n-Zx5fm3SC6XlV7yFqKCAod4qARroDuQB&currency=USD"></script>
+
+    <script>
+        const bookingId = @Model.Id;
+        const totalAmount = '@Model.TotalPrice.ToString("F2")';
+
+        // Get the anti-forgery token
+        const antiForgeryToken = $('input[name="__RequestVerificationToken"]').first().val();
+
+        // Initialize PayPal Buttons
+        paypal.Buttons({
+            style: {
+                layout: 'vertical',
+                color: 'gold',
+                shape: 'rect',
+                label: 'paypal',
+                height: 55
+            },
+
+                    // Create order
+        createOrder: function(data, actions) {
+            return fetch('@Url.Action("CreatePayPalOrder", "Booking")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': antiForgeryToken
+                },
+                body: JSON.stringify({ bookingId: bookingId })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('HTTP error ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Order creation response:', data);
+                if (data.success && data.orderId) {
+                    return data.orderId;
+                } else {
+                    throw new Error(data.message || 'Failed to create PayPal order');
+                }
+            })
+            .catch(err => {
+                console.error('Error creating order:', err);
+                alert('Failed to create PayPal order. Please try again. Error: ' + err.message);
+                throw err;
+            });
+        },
+
+            // Capture order
+            onApprove: function(data, actions) {
+                // Show loading indicator
+                document.getElementById('paypal-button-container').innerHTML = '<div class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Processing payment...</span></div><p class="mt-2">Processing your payment...</p></div>';
+
+                return fetch('@Url.Action("CapturePayPalOrder", "Booking")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': antiForgeryToken
+                    },
+                    body: JSON.stringify({
+                        orderId: data.orderID,
+                        bookingId: bookingId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Redirect to success page
+                        window.location.href = '@Url.Action("PaymentSuccess", "Booking")?bookingId=' + bookingId;
+                    } else {
+                        alert('Payment capture failed: ' + (data.message || 'Unknown error'));
+                        location.reload();
+                    }
+                })
+                .catch(err => {
+                    console.error('Error capturing order:', err);
+                    alert('An error occurred while processing your payment. Please contact support.');
+                    location.reload();
+                });
+            },
+
+            // Handle errors
+            onError: function(err) {
+                console.error('PayPal error:', err);
+                alert('An error occurred with PayPal payment. Please try again or contact support.');
+            },
+
+            // Handle cancellation
+            onCancel: function(data) {
+                window.location.href = '@Url.Action("PaymentCancelled", "Booking")?bookingId=' + bookingId;
+            }
+        }).render('#paypal-button-container');
+    </script>
+}
