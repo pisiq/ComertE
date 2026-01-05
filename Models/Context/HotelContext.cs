@@ -14,6 +14,7 @@ namespace Hotel.Models.Context
         public DbSet<BookingItem> BookingItems { get; set; }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
+        public DbSet<Favorite> Favorites { get; set; }
 
         public HotelContext(DbContextOptions<HotelContext> options) : base(options)
         {
@@ -48,6 +49,24 @@ namespace Hotel.Models.Context
                 .WithMany()
                 .HasForeignKey(bi => bi.RoomId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Configure Favorites relationships
+            builder.Entity<Favorite>()
+                .HasOne(f => f.User)
+                .WithMany()
+                .HasForeignKey(f => f.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Favorite>()
+                .HasOne(f => f.Room)
+                .WithMany()
+                .HasForeignKey(f => f.RoomId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Create unique index to prevent duplicate favorites
+            builder.Entity<Favorite>()
+                .HasIndex(f => new { f.UserId, f.RoomId })
+                .IsUnique();
         }
     }
 }

@@ -3,10 +3,12 @@
 
 @inject IUserService UserService
 @inject ICartService CartService
+@inject IFavoriteService FavoriteService
 
 @{
     string profilePicturePath = null;
     int cartItemCount = 0;
+    int favoriteCount = 0;
 
     if (User.Identity.IsAuthenticated)
     {
@@ -20,6 +22,7 @@
         if (!string.IsNullOrEmpty(userId))
         {
             cartItemCount = await CartService.GetCartItemCountAsync(userId);
+            favoriteCount = await FavoriteService.GetFavoriteCountAsync(userId);
         }
     }
 }
@@ -59,7 +62,6 @@
                 right: -8px;
             }
 
-        /* Red navbar styling */
         .navbar-dark.bg-danger {
             background-color: #8b0000 !important;
         }
@@ -112,17 +114,27 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto fw-bold">
-                        <li class="nav-item"><a class="nav-link" asp-controller="Room" asp-action="AllRooms"><i class="bi bi-box-seam me-1"></i>Products</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-controller="Location" asp-action="AllLocations"><i class="bi bi-tags me-1"></i>Categories</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Room" asp-action="AllRooms"><i class="bi bi-box-seam me-1"></i>Products</a></li>                      
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
-                                <a class="nav-link cart-badge" asp-controller="Cart" asp-action="Index">
+                                <a class="nav-link cart-badge" asp-controller="Favorite" asp-action="Index" title="Favorites">
+                                    <i class="bi bi-heart-fill fs-5"></i>
+                                    @if (favoriteCount > 0)
+                                    {
+                                        <span class="badge bg-danger rounded-pill" id="favoriteCount">@favoriteCount</span>
+                                    }
+                                    Favorites
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link cart-badge" asp-controller="Cart" asp-action="Index" title="Shopping Cart">
                                     <i class="bi bi-cart-fill fs-5"></i>
                                     @if (cartItemCount > 0)
                                     {
-                                        <span class="badge bg-warning rounded-pill">@cartItemCount</span>
+                                        <span class="badge bg-warning rounded-pill" id="cartCount">@cartItemCount</span>
                                     }
+                                    Cart
                                 </a>
                             </li>
                         }

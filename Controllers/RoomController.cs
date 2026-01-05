@@ -292,11 +292,25 @@ namespace Hotel.Controllers
         }
 
         // Public view for customers
-        public async Task<IActionResult> AllRooms()
+        public async Task<IActionResult> AllRooms(int? locationId)
         {
             try
             {
                 var rooms = await _roomService.GetAllRoomsWithDetailsAsync();
+                
+                // Filter by location if specified
+                if (locationId.HasValue && locationId.Value > 0)
+                {
+                    rooms = rooms.Where(r => r.LocationId == locationId.Value);
+                    var location = await _locationService.GetLocationByIdAsync(locationId.Value);
+                    ViewBag.SelectedLocation = location?.Name ?? "Unknown Location";
+                    ViewBag.SelectedLocationId = locationId.Value;
+                }
+                
+                // Get all locations for the filter dropdown
+                var locations = await _locationService.GetAllLocationsAsync();
+                ViewBag.Locations = locations;
+                
                 return View(rooms);
             }
             catch (Exception ex)
@@ -305,6 +319,12 @@ namespace Hotel.Controllers
                 TempData["ErrorMessage"] = "Error loading rooms.";
                 return View(new List<Room>());
             }
+        }
+
+        // GET: Room/ByLocation/5
+        public async Task<IActionResult> ByLocation(int id)
+        {
+            return await AllRooms(id);
         }
     }
 }
