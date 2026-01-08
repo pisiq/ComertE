@@ -120,8 +120,10 @@
                         <div class="d-grid gap-2">
                             @if (User.Identity.IsAuthenticated)
                             {
+                                @Html.AntiForgeryToken()
+
                                 <!-- Add to Favorites Button -->
-                                <button class="btn btn-outline-danger w-100 mb-2 btn-toggle-favorite" 
+                                <button class="btn btn-outline-danger w-100 mb-2 btn-toggle-favorite"
                                         data-room-id="@Model.Id">
                                     <i class="bi bi-heart me-2"></i>
                                     <span class="favorite-text">Add to Favorites</span>
@@ -130,7 +132,6 @@
                                 @if (Model.RoomCount > 0)
                                 {
                                     <form id="addToCartForm" asp-controller="Cart" asp-action="AddToCart" method="post">
-                                        @Html.AntiForgeryToken()
                                         <input type="hidden" name="productId" value="@Model.Id" />
 
                                         <div class="input-group mb-3">
@@ -188,9 +189,90 @@
 @section Scripts {
     <script>
         $(document).ready(function() {
-            // Check if room is already in favorites
-            const roomId = @Model.Id;
-            checkFavoriteStatus(roomId);
+            // Check if user is authenticated
+            @if (User.Identity.IsAuthenticated)
+            {
+                    <text>
+                    // Check if room is already in favorites
+                    const roomId = @Model.Id;
+                    checkFavoriteStatus(roomId);
+
+                    // Toggle favorite
+                    $('.btn-toggle-favorite').on('click', function(e) {
+                        e.preventDefault();
+                        const button = $(this);
+                        const icon = button.find('i');
+                        const text = button.find('.favorite-text');
+                        const isFavorite = button.hasClass('btn-danger');
+
+                        const action = isFavorite ? 'Remove' : 'Add';
+                        const url = '@Url.Action("Add", "Favorite")';  // Use Add as base
+                        const finalUrl = isFavorite ? '@Url.Action("Remove", "Favorite")' : url;
+
+                        $.ajax({
+                            url: finalUrl,
+                            type: 'POST',
+                            data: {
+                                roomId: roomId,
+                                __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    if (isFavorite) {
+                                        button.removeClass('btn-danger').addClass('btn-outline-danger');
+                                        icon.removeClass('bi-heart-fill').addClass('bi-heart');
+                                        text.text('Add to Favorites');
+                                    } else {
+                                        button.removeClass('btn-outline-danger').addClass('btn-danger');
+                                        icon.removeClass('bi-heart').addClass('bi-heart-fill');
+                                        text.text('Remove from Favorites');
+                                    }
+
+                                    if ($('#favoriteCount').length && response.count !== undefined) {
+                                        $('#favoriteCount').text(response.count);
+
+                                        // Show or hide badge based on count
+                                        if (response.count > 0) {
+                                            $('#favoriteCount').removeClass('d-none');
+                                        } else {
+                                            $('#favoriteCount').addClass('d-none');
+                                        }
+                                    }
+
+                                    showToast('success', response.message);
+                                } else {
+                                    showToast('warning', response.message);
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Error:', error);
+                                console.error('Status:', status);
+                                console.error('Response:', xhr.responseText);
+                                showToast('error', 'Failed to update favorites');
+                            }
+                        });
+                    });
+
+                    function checkFavoriteStatus(roomId) {
+                        $.ajax({
+                            url: '@Url.Action("IsFavorite", "Favorite")',
+                            type: 'GET',
+                            data: { roomId: roomId },
+                            success: function(response) {
+                                if (response.isFavorite) {
+                                    const button = $('.btn-toggle-favorite');
+                                    button.removeClass('btn-outline-danger').addClass('btn-danger');
+                                    button.find('i').removeClass('bi-heart').addClass('bi-heart-fill');
+                                    button.find('.favorite-text').text('Remove from Favorites');
+                                }
+                            },
+                            error: function() {
+                                console.log('Could not check favorite status');
+                            }
+                        });
+                    }
+                    </text>
+            }
 
             // Add to cart
             $('#addToCartForm').submit(function (e) {
@@ -208,6 +290,11 @@
                             if (response.itemCount) {
                                 $('.cart-badge .badge').text(response.itemCount);
                                 $('#cartCount').text(response.itemCount);
+
+                                // Show cart badge if hidden
+                                if ($('#cartCount').hasClass('d-none')) {
+                                    $('#cartCount').removeClass('d-none');
+                                }
                             }
                         } else {
                             alert(response.message || 'Failed to add product to cart');
@@ -218,67 +305,6 @@
                     }
                 });
             });
-
-            // Toggle favorite
-            $('.btn-toggle-favorite').on('click', function(e) {
-                e.preventDefault();
-                const button = $(this);
-                const icon = button.find('i');
-                const text = button.find('.favorite-text');
-                const isFavorite = button.hasClass('btn-danger');
-                
-                const action = isFavorite ? 'Remove' : 'Add';
-                const url = '@Url.Action("", "Favorite")'.replace(/\/[^\/]*$/, '/' + action);
-                
-                $.ajax({
-                    url: url,
-                    type: 'POST',
-                    data: {
-                        roomId: roomId,
-                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            if (isFavorite) {
-                                button.removeClass('btn-danger').addClass('btn-outline-danger');
-                                icon.removeClass('bi-heart-fill').addClass('bi-heart');
-                                text.text('Add to Favorites');
-                            } else {
-                                button.removeClass('btn-outline-danger').addClass('btn-danger');
-                                icon.removeClass('bi-heart').addClass('bi-heart-fill');
-                                text.text('Remove from Favorites');
-                            }
-                            
-                            if ($('#favoriteCount').length && response.count !== undefined) {
-                                $('#favoriteCount').text(response.count);
-                            }
-                            
-                            showToast('success', response.message);
-                        } else {
-                            showToast('warning', response.message);
-                        }
-                    },
-                    error: function() {
-                        showToast('error', 'Failed to update favorites');
-                    }
-                });
-            });
-
-            function checkFavoriteStatus(roomId) {
-                $.ajax({
-                    url: '@Url.Action("IsFavorite", "Favorite")',
-                    type: 'GET',
-                    data: { roomId: roomId },
-                    success: function(response) {
-                        if (response.isFavorite) {
-                            const button = $('.btn-toggle-favorite');
-                            button.removeClass('btn-outline-danger').addClass('btn-danger');
-                            button.find('i').removeClass('bi-heart').addClass('bi-heart-fill');
-                            button.find('.favorite-text').text('Remove from Favorites');
-                        }
-                    }
-                });
-            }
 
             function showToast(type, message) {
                 const bgClass = type === 'success' ? 'bg-success' : type === 'warning' ? 'bg-warning' : 'bg-danger';
