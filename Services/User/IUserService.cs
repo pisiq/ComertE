@@ -10,6 +10,7 @@ namespace Hotel.Services
         Task<bool> AuthenticateUserAsync(LoginModel model);
         Task<bool> EmailExistsAsync(string email);
         Task<User> GetUserByEmailAsync(string email);
+        Task<User> GetUserByIdAsync(string userId);
         Task<bool> UpdateUserAsync(User user);
         Task<IEnumerable<User>> GetAllUsersAsync();
 

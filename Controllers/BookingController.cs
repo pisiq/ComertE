@@ -126,10 +126,15 @@ namespace Hotel.Controllers
 
                 var firstItem = cart.CartItems.First();
 
+                // Get user information
+                var user = await _userService.GetUserByIdAsync(userId);
+
                 var viewModel = new BookingViewModel
                 {
                     CheckInDate = firstItem.CheckInDate,
                     CheckOutDate = firstItem.CheckOutDate,
+                    Email = user?.Email,
+                    Phone = user?.Phone.ToString(),
                     Items = cart.CartItems.Select(ci => new BookingItemViewModel
                     {
                         RoomId = ci.ProductId,

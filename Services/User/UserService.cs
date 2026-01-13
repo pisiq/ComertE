@@ -67,6 +67,7 @@ namespace Hotel.Services
 
             return false;
         }
+        
         public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
             return await _userManager.Users.ToListAsync();
@@ -106,6 +107,11 @@ namespace Hotel.Services
         public async Task<User> GetUserByEmailAsync(string email)
         {
             return await _userManager.FindByEmailAsync(email);
+        }
+
+        public async Task<User> GetUserByIdAsync(string userId)
+        {
+            return await _userManager.FindByIdAsync(userId);
         }
     }
 }

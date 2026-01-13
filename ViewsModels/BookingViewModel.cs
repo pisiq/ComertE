@@ -15,6 +15,15 @@ namespace Hotel.ViewsModels
         [DataType(DataType.Date)]
         public DateTime CheckOutDate { get; set; }
 
+        // User contact information
+        [Display(Name = "Email")]
+        [EmailAddress(ErrorMessage = "Invalid email address")]
+        public string Email { get; set; }
+
+        [Display(Name = "Phone Number")]
+        [Phone(ErrorMessage = "Invalid phone number")]
+        public string Phone { get; set; }
+
         // List of items to book (from cart)
         public List<BookingItemViewModel> Items { get; set; } = new List<BookingItemViewModel>();
 
